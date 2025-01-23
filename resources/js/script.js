@@ -9,7 +9,7 @@ function updateDisplay() {
     if (currOpr) {
         display.value = `${prevVal} ${currOpr} ${currVal}`;
     } else {
-        display.value = currVal || prevVal || '0';
+        display.value =  prevVal || currVal || '0';
     }
 }
 
@@ -51,21 +51,23 @@ function setOpr(opr) {
 }
 
 
-function evaluate(){
+function calculate(){
     if(currVal==='' || prevVal==='' || !currOpr){
         return;
     }
     calcRes();
-    currOpr='';
+    // currVal=prevVal;
+    // prevVal='';
+    currOpr=null;
     updateDisplay();
 }
 
 function square(){
+    const num1 = parseFloat(currVal);
+    let output;
     if(currVal===''){
         return;
     }
-    const num1 = parseFloat(currVal);
-    let output;
     output= num1*num1;
     currVal=output.toString();
     updateDisplay();
@@ -81,7 +83,7 @@ function inverse(){
     currVal=output.toString();
     updateDisplay();
 }
-
+ 
 
 function setOperator(opr) {
     if (currVal === '' && prevVal === '') return; 
@@ -123,25 +125,33 @@ function calcRes() {
 function changeSign() {
     if(currVal!==''){
         currVal=(parseFloat(currVal)*(-1)).toString();
-    }else if(prevVal!=='' & currOpr===null){
+    }else if(prevVal!=='' && currOpr===null){
         prevVal=(parseFloat(prevVal)*(-1)).toString()
     }
     updateDisplay();
 }
 
+function memDis(){
+    const m = document.getElementById('memoryDisplay');
+    memoryDisplay.textContent= `Memory:${memory}`;
+}
+
 function mS(){
     if (currVal==='') return;
     memory=parseFloat(currVal);
+    memDis();
 }
 
 function mAdd(){
     if (currVal==='') return;
     memory+=parseFloat(currVal);
+    memDis();
 }
 
 function mSub() {
     if (currVal==='') return;
     memory-=parseFloat(currVal);
+    memDis();
 }
 
 document.getElementById('btn0').addEventListener('click',()=>appendValue('0'))
@@ -170,7 +180,7 @@ document.getElementById('btnClear').addEventListener('click',clearValue);
 document.getElementById('btnBackspace').addEventListener('click',backspace);
 document.getElementById('btnSquare').addEventListener('click', square);
 document.getElementById('btnInverse').addEventListener('click', inverse);
-document.getElementById('btnEqual').addEventListener('click', evaluate);
+document.getElementById('btnEqual').addEventListener('click', calculate);
 document.getElementById('btnPM').addEventListener('click',changeSign)
 
 
