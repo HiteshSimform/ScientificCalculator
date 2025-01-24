@@ -1,126 +1,174 @@
 let memory = 0;
 let currOpr = null;
 let prevVal = '';
+let currVal = '';
  
 
 const display = document.getElementById('display');
 
+clearValue();
+
+// Display Update
+
 function updateDisplay() {
-    if (currOpr) {
+    if (currOpr && currVal === '') {
+        display.value = `${prevVal} ${currOpr}`;
+    } else if (currOpr) {
         display.value = `${prevVal} ${currOpr} ${currVal}`;
     } else {
         display.value =  prevVal || currVal || '0';
     }
 }
 
-function appendValue(value){
-    if (value === '.' && currVal.includes('.')) return;
+// Add Value on Display
+
+function appendValue(value) {
+    if (resultDisplayed) {
+        prevVal = '';
+        currVal = '';
+        currOpr = null;
+        resultDisplayed = false;
+    }
+    if (value === '.' && currVal.includes('.')) {
+        alert('Invalid input: Decimal point is either misplaced or already present.');
+        return;
+    }
+    if (!currOpr && prevVal !== '' && currVal === '') {
+        currVal = prevVal;
+        prevVal = '';
+    }
     currVal += value;
     updateDisplay();
 }
+
+// Clear the Value on Display
 
 function clearValue(){
     currVal='';
     prevVal='';
     currOpr=null;
+    resultDisplayed = false;
     updateDisplay();
 }
+
+// Backspace Functionality
 
 function backspace() {
-    if (currVal!=='') {
-        currVal = currVal.slice(0,-1);
-    }
-    else if(currOpr!==null){
-        currOpr=null;
-        currVal=prevVal;
-        prevVal='';
+    if (currVal !== '') {
+        currVal = currVal.slice(0, -1);
+    } else if (currOpr !== null) {
+        currOpr = null;
+        currVal = prevVal;
+        prevVal = '';
+    } else if (prevVal !== '') {
+        prevVal = prevVal.slice(0, -1);
     }
     updateDisplay();
 }
+
+
+// Set the operator for doing the calculations
 
 function setOpr(opr) {
-    if(currVal==='' && prevVal==='') return;
-    if (prevVal !=='' && currVal!=='') {
+    if (currVal === '' && prevVal === '') {
+        alert('Invalid operation: No number to apply the operator to.');
+        return;
+    }
+    if (prevVal !== '' && currVal !== '') {
         calcRes();
     }
-
     prevVal = prevVal || currVal;
-    currVal='';
-    currOpr=opr;
+    currVal = '';
+    currOpr = opr;
+    resultDisplayed = false;
     updateDisplay();
 }
 
+// For calculate and show the result in Display
 
-function calculate(){
-    if(currVal==='' || prevVal==='' || !currOpr){
+function calculate() {
+    if (currVal === '' || prevVal === '' || !currOpr) {
+        alert('Invalid calculation: Missing numbers or operator.');
         return;
     }
     calcRes();
-    // currVal=prevVal;
-    // prevVal='';
-    currOpr=null;
+    currOpr = null;
+    resultDisplayed = true; 
     updateDisplay();
 }
 
-function square(){
-    const num1 = parseFloat(currVal);
-    let output;
-    if(currVal===''){
+// For calculate Square
+
+function square() {
+    let num;
+    if (currVal !== '') {
+        num = parseFloat(currVal);
+    } else if (prevVal !== '' && currOpr === null) {
+        num = parseFloat(prevVal);
+    } else {
         return;
     }
-    output= num1*num1;
-    currVal=output.toString();
+    const output = num * num;
+    currVal = output.toString();
+    prevVal = '';
     updateDisplay();
 }
 
-function inverse(){
-    if(currVal===''){
+// For Calculate the Inverse
+
+function inverse() {
+    let num;
+    if (currVal !== '') {
+        num = parseFloat(currVal);
+    } else if (prevVal !== '' && currOpr === null) {
+        num = parseFloat(prevVal);
+    } else {
         return;
     }
-    const num1 = parseFloat(currVal);
-    let output;
-    output= 1/num1;
-    currVal=output.toString();
+    const output = 1 / num;
+    currVal = output.toString();
+    prevVal = '';
     updateDisplay();
 }
  
-
-function setOperator(opr) {
-    if (currVal === '' && prevVal === '') return; 
-    if (prevVal !== '' && currVal !== '') {
-        calculateResult();
-    }
-    prevVal = currVal || prevVal; 
-    currVal = ''; 
-    currOpr = opr; 
-    updateDisplay();
-}
+// Calculate the operations like +, -  *, /, %
 
 function calcRes() {
     const num1 = parseFloat(prevVal);
     const num2 = parseFloat(currVal);
     let output;
 
-    switch(currOpr){
+    if (isNaN(num1) || isNaN(num2)) {
+        alert('Invalid Input');
+        clearValue();
+        return;
+    }
+
+    switch (currOpr) {
         case '+':
-            output=num1+num2;
+            output = num1 + num2;
             break;
         case '-':
-            output=num1-num2;
+            output = num1 - num2;
             break;
         case '*':
-            output=num1*num2;
+            output = num1 * num2;
             break;
         case '/':
-            output= num2 === 0 ? 'Infinity' : num1 / num2;
+            output = num2 === 0 ? 'Infinity' : num1 / num2;
             break;
         case '%':
-            output=num1%num2;
+            output = num1 % num2;
             break;
+        default:
+            alert('Unknown Operator');
+            return;
     }
     prevVal = output.toString();
     currVal = '';
 }
+
+// Change the sign +/- implementation
 
 function changeSign() {
     if(currVal!==''){
@@ -131,16 +179,29 @@ function changeSign() {
     updateDisplay();
 }
 
+// Memory Display
+
 function memDis(){
     const m = document.getElementById('memoryDisplay');
     memoryDisplay.textContent= `Memory:${memory}`;
 }
 
+// Memory Save
+
 function mS(){
-    if (currVal==='') return;
-    memory=parseFloat(currVal);
+    if (currVal !== '') {
+        memory = parseFloat(currVal); 
+    } else if (prevVal !== '') {
+        memory = parseFloat(prevVal); 
+        prevVal=currVal;
+    } else {
+        alert('No Value, So We can not Save in Memory');
+        return;
+    }
     memDis();
 }
+
+// Memory Add
 
 function mAdd(){
     if (currVal==='') return;
@@ -148,11 +209,34 @@ function mAdd(){
     memDis();
 }
 
+// Memory Subtract
+
 function mSub() {
     if (currVal==='') return;
     memory-=parseFloat(currVal);
     memDis();
 }
+
+// Memory Clear
+
+function mC() {
+    memory = 0;
+    memDis();
+}
+
+// Memory Read
+
+function mR() {
+    if (memory === 0) {
+        alert('No Value, So We can not Recall Memory');
+        return;
+    }
+    currVal = memory.toString();
+    updateDisplay();
+}
+
+
+// Buttons
 
 document.getElementById('btn0').addEventListener('click',()=>appendValue('0'))
 document.getElementById('btn1').addEventListener('click',()=>appendValue('1'))
@@ -189,18 +273,5 @@ document.getElementById('btnPM').addEventListener('click',changeSign)
 document.getElementById('btnMS').addEventListener('click', mS);
 document.getElementById('btnMAdd').addEventListener('click', mAdd);
 document.getElementById('btnMSub').addEventListener('click', mSub);
-
-
-// console.log("Hello");
-
-// function alt() {
-//     alert("Calc");
-// }
-  
-
-// let text="Hii";
-// document.getElementById("trypara").innerHTML = text;
-
-// function changecontent() {
-//     document.getElementById("trypara").innerHTML = "New";
-// }
+document.getElementById('btnMC').addEventListener('click', mC);
+document.getElementById('btnMR').addEventListener('click', mR);
