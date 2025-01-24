@@ -44,7 +44,7 @@ function appendValue(value) {
 // Clear the Value on Display
 
 function clearValue(){
-    currVal='';
+    currVal='0';
     prevVal='';
     currOpr=null;
     resultDisplayed = false;
@@ -275,3 +275,8 @@ document.getElementById('btnMAdd').addEventListener('click', mAdd);
 document.getElementById('btnMSub').addEventListener('click', mSub);
 document.getElementById('btnMC').addEventListener('click', mC);
 document.getElementById('btnMR').addEventListener('click', mR);
+
+document.addEventListener('DOMContentLoaded',()=>{
+    clearValue();
+    memDis();
+});
