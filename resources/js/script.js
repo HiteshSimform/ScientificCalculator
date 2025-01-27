@@ -236,6 +236,108 @@ function mR() {
 }
 
 
+// Calculate Square Root
+function squareRoot() {
+    let num = parseFloat(currVal || prevVal);
+    if (isNaN(num) || num < 0) {
+        alert('Invalid Input for Square Root');
+        return;
+    }
+    currVal = Math.sqrt(num).toString();
+    prevVal = '';
+    updateDisplay();
+}
+
+// Calculate Log (Base 10)
+function logarithm() {
+    let num = parseFloat(currVal || prevVal);
+    if (isNaN(num) || num <= 0) {
+        alert('Invalid Input for Logarithm');
+        return;
+    }
+    currVal = Math.log10(num).toString();
+    prevVal = '';
+    updateDisplay();
+}
+
+// Calculate ln
+function naturalLogarithm() {
+    let num = parseFloat(currVal || prevVal);
+    if (isNaN(num) || num <= 0) {
+        alert('Invalid Input for Natural Logarithm');
+        return;
+    }
+    currVal = Math.log(num).toString();
+    prevVal = '';
+    updateDisplay();
+}
+
+// Calculate Factorial
+function factorial() {
+    let num = parseFloat(currVal || prevVal);
+    if (isNaN(num) || num < 0 || !Number.isInteger(num)) {
+        alert('Invalid Input for Factorial');
+        return;
+    }
+    let fact = 1;
+    for (let i = 1; i <= num; i++) {
+        fact *= i;
+    }
+    currVal = fact.toString();
+    prevVal = '';
+    updateDisplay();
+}
+
+// Calculate Power (x^y)
+function power() {
+    if (prevVal === '' || currVal === '') {
+        alert('Both Base and Exponent are Required');
+        return;
+    }
+    const base = parseFloat(prevVal);
+    const exponent = parseFloat(currVal);
+    currVal = Math.pow(base, exponent).toString();
+    prevVal = '';
+    currOpr = null;
+    updateDisplay();
+}
+
+// Calculate 10^x
+function tenPowerX() {
+    let num = parseFloat(currVal || prevVal);
+    if (isNaN(num)) {
+        alert('Invalid Input for 10^x');
+        return;
+    }
+    currVal = Math.pow(10, num).toString();
+    prevVal = '';
+    updateDisplay();
+}
+
+// Calculate sin, cos, tan
+function trigoFun(func) {
+    let num = parseFloat(currVal || prevVal);
+    if (isNaN(num)) {
+        alert('Invalid Input for Trigonometric Function');
+        return;
+    }
+    const rad = (num * Math.PI) / 180; 
+    switch (func) {
+        case 'sin':
+            currVal = Math.sin(rad).toString();
+            break;
+        case 'cos':
+            currVal = Math.cos(rad).toString();
+            break;
+        case 'tan':
+            currVal = Math.tan(rad).toString();
+            break;
+    }
+    prevVal = '';
+    updateDisplay();
+}
+
+
 // Buttons
 
 document.getElementById('btn0').addEventListener('click',()=>appendValue('0'))
@@ -275,6 +377,17 @@ document.getElementById('btnMAdd').addEventListener('click', mAdd);
 document.getElementById('btnMSub').addEventListener('click', mSub);
 document.getElementById('btnMC').addEventListener('click', mC);
 document.getElementById('btnMR').addEventListener('click', mR);
+
+
+document.getElementById('btnSqrt').addEventListener('click', squareRoot);
+document.getElementById('btnLog').addEventListener('click', logarithm);
+document.getElementById('btnLn').addEventListener('click', naturalLogarithm);
+document.getElementById('btnFact').addEventListener('click', factorial);
+document.getElementById('btnPower').addEventListener('click', power);
+document.getElementById('btnTenPowerX').addEventListener('click', tenPowerX);
+document.getElementById('btnSin').addEventListener('click', () => trigoFun('sin'));
+document.getElementById('btnCos').addEventListener('click', () => trigoFun('cos'));
+document.getElementById('btnTan').addEventListener('click', () => trigoFun('tan'));
 
 document.addEventListener('DOMContentLoaded',()=>{
     clearValue();
